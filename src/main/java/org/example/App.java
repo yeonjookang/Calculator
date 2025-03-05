@@ -7,12 +7,15 @@ public class App {
         OutputHandler outputHandler = new OutputHandler();
 
         while (true) {
-            int num1 = inputHandler.getIntInput("첫 번째 양의 정수를 입력하세요: ");
-            int num2 = inputHandler.getIntInput("두 번째 양의 정수를 입력하세요: ");
+            Number num1 = inputHandler.getNumberInput("첫 번째 양의 정수를 입력하세요: ", Double.class);
+            Number num2 = inputHandler.getNumberInput("두 번째 양의 정수를 입력하세요: ", Double.class);
             String operator = inputHandler.getOperatorInput(num2);
 
-            int result = ExceptionHandler.handle(() -> calculator.calculate(num1, num2, operator));
+            double result = ExceptionHandler.handle(() -> calculator.calculate(num1, num2, operator));
             outputHandler.printResult(result);
+
+            double threshold = inputHandler.getNumberInput("필터링할 기준 값을 입력하세요: ", Double.class);
+            outputHandler.printFilteredResults(calculator.getResultsGreaterThan(threshold));
 
             if (inputHandler.shouldExit()) {
                 outputHandler.printMessage("프로그램을 종료합니다.");

@@ -5,24 +5,31 @@ import java.util.Scanner;
 public class InputHandler {
     private Scanner scanner = new Scanner(System.in);
 
-    public int getIntInput(String message) {
-        //익명클래스로 ExceptionHandler에 함수 전달
+    public <T extends Number> T getNumberInput(String message, Class<T> type) {
         return ExceptionHandler.handle(() -> {
             System.out.print(message);
-            int num = Integer.parseInt(scanner.nextLine());
-            if (num < 0) throw new IllegalArgumentException("음수는 입력할 수 없습니다.");
-            return num;
+            String input = scanner.nextLine();
+            if (type == Integer.class) {
+                Integer num = Integer.parseInt(input);
+                if (num < 0) throw new IllegalArgumentException("음수는 입력할 수 없습니다.");
+                //T 타입으로 변환 후 반환(불필요한 형변환 예외 방지)
+                return type.cast(num);
+            } else {
+                Double num = Double.parseDouble(input);
+                if (num < 0) throw new IllegalArgumentException("음수는 입력할 수 없습니다.");
+                return type.cast(num);
+            }
         });
     }
 
-    public String getOperatorInput(int num2) {
+    public String getOperatorInput(Number num2) {
         return ExceptionHandler.handle(() -> {
             System.out.print("연산 기호를 입력하세요 (+, -, x, %): ");
             String operator = scanner.nextLine();
             if (!(operator.equals("+") || operator.equals("-") || operator.equals("x") || operator.equals("%"))) {
                 throw new IllegalArgumentException("사칙연산 기호(+,-,x,%)만 입력 가능합니다.");
             }
-            if (operator.equals("%") && num2 == 0) {
+            if (operator.equals("%") && num2.doubleValue() == 0) {
                 throw new ArithmeticException("0으로 나눌 수 없습니다.");
             }
             return operator;
